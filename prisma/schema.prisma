@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+model Data{
+  id Int @id  @default(autoincrement())
+  createdAt              DateTime            @default(now())
+  screen_width Int
+  screen_height Int
+  referrer_name String
+  user_agent_name String
+  ip Bytes
+  application_name String
+  ip_info IpInfo @relation(fields: [ip], references: [name])
+  referrer Referrer? @relation(fields: [referrer_name], references: [name])
+  user_agent UserAgent @relation(fields: [user_agent_name], references: [name])
+  application Application @relation(fields: [application_name], references: [name])
+}
+
+model Application{
+  createdAt              DateTime            @default(now())
+  name String @unique @id
+  data Data[]
+}
+
+model IpInfo{
+  createdAt              DateTime            @default(now())
+  name  Bytes @id @unique
+  country String?
+  checked Boolean @default(false)
+  data Data[]
+}
+
+model UserAgent{
+  createdAt              DateTime            @default(now())
+  name  String @unique @id
+  operating_system String?
+  operating_system_version String?
+  browser String?
+  browser_version String?
+  browser_engine String?
+  is_bot Boolean?
+  checked Boolean @default(false)
+  data Data[]
+}
+
+model Referrer{
+  createdAt              DateTime            @default(now())
+  name  String @unique @id
+  data Data[]
+}
